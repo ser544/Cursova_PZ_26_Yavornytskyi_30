@@ -295,9 +295,11 @@ void ListOfPatients::removePatient(int index){
         throw OperationException("видалення пацієнта", "невідома помилка");
     }
 }
+
 void ListOfPatients::reset(){
     std::vector<Person>().swap(this->listOfPeople);
 }
+
 ListOfPatients* ListOfPatients::oldestWomenWithNormalHemoglobinByName(std::string name) const {
     if (name.empty()) {
         throw ValidationException("ім'я для пошуку", "не може бути порожнім");
@@ -352,13 +354,22 @@ std::istream& operator>>(std::istream& in, ListOfPatients& obj){
     }
 
     int recordsRead = 0;
-    Person p;
 
-    while (in >> p) {
-        if (in.fail() && !in.eof()) {
-            throw FileReadException("поточний файл", recordsRead + 1);
+    while (true) {
+        Person p;
+        in >> p;
+        // Якщо досягли кінця файлу або помилка читання
+        if (in.eof()) {
+            break;
         }
-        if (in.fail()) break;
+
+        if (in.fail()) {
+            // Якщо це не кінець файлу, значить помилка
+            if (!in.eof()) {
+                throw FileReadException("поточний файл", recordsRead + 1);
+            }
+            break;
+        }
 
         try {
             obj.addPatient(p);

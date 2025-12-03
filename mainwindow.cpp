@@ -32,7 +32,6 @@ void MainWindow::setupUI()
     // Головний layout
     QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
 
-    // === СЕКЦІЯ КНОПОК ===
     QGroupBox* buttonsGroup = new QGroupBox("Операції", this);
     QVBoxLayout* buttonsLayout = new QVBoxLayout(buttonsGroup);
 
@@ -76,7 +75,6 @@ void MainWindow::setupUI()
     buttonsLayout->addLayout(row2);
     buttonsLayout->addLayout(row3);
 
-    // === СЕКЦІЯ ТАБЛИЦІ ===
     QGroupBox* tableGroup = new QGroupBox("Список пацієнтів", this);
     QVBoxLayout* tableLayout = new QVBoxLayout(tableGroup);
 
@@ -131,16 +129,13 @@ void MainWindow::setupTable()
 
 void MainWindow::updateMainTable()
 {
-    // ТУТ ВИ ДОДАСТЕ КОД ДЛЯ ОНОВЛЕННЯ ТАБЛИЦІ З ВАШОГО ListOfPatients
-    // Використовуйте std::vector та std::string
-
     mainTable->clearContents();
     mainTable->setRowCount(patients->length());
 
     for(int i = 0; i < patients->length(); i++) {
         (*patients)[i].setId(i + 1);
         const Person& p = (*patients)[i];
-        p.setId(i+1);
+
         mainTable->setItem(i, 0, new QTableWidgetItem(QString::number(p.getId())));
         mainTable->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(p.getSurname())));
         mainTable->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(p.getName())));
@@ -149,7 +144,6 @@ void MainWindow::updateMainTable()
         std::string _sex = p.getSex() == Sex::MAN ? "Ч" : "Ж";
         mainTable->setItem(i, 4, new QTableWidgetItem(QString::fromStdString(_sex)));
 
-        // === ТЕМПЕРАТУРА ===
         QTableWidgetItem* tItem =
             new QTableWidgetItem(QString::number(p.getT(), 'f', 1));
 
@@ -168,7 +162,6 @@ void MainWindow::updateMainTable()
 
         mainTable->setItem(i, 5, tItem);
 
-        // === ГЕМОГЛОБІН ===
         QTableWidgetItem* hbItem =
             new QTableWidgetItem(QString::number(p.getHemoglobin()));
 
@@ -187,10 +180,7 @@ void MainWindow::updateMainTable()
 
         mainTable->setItem(i, 6, hbItem);
     }
-
-    //std::cout << patient
 }
-
 void MainWindow::showResultDialog(ListOfPatients* result, const std::string& title)
 {
     QDialog* dialog = new QDialog(this);

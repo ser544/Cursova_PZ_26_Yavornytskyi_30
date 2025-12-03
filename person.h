@@ -36,8 +36,6 @@ public:
 
     Person(const Person& other);
     Person& operator=(const Person&);
-    Person& operator=(Person&& other) noexcept;
-    Person(Person&& other) noexcept;
 
     int getId() const;
     const std::string getSurname() const;
@@ -76,14 +74,14 @@ private:
     unsigned int* hemoglobin;
     static unsigned numberOfPeople;
 
-    static unsigned minHemoglobinForMan;
-    static unsigned maxHemoglobinForMan;
-    static unsigned minHemoglobinForWoman;
-    static unsigned maxHemoglobinForWoman;
+    static const unsigned minHemoglobinForMan;
+    static const unsigned maxHemoglobinForMan;
+    static const unsigned minHemoglobinForWoman;
+    static const unsigned maxHemoglobinForWoman;
 
-    static double minTForMan;
-    static double maxTForMan;
-    static double minTForWoman;
-    static double maxTForWoman;
+    static const double minTForMan;
+    static const double maxTForMan;
+    static const double minTForWoman;
+    static const double maxTForWoman;
 };
 #endif

@@ -110,41 +110,11 @@ Person::Person(std::string _surname,
         throw MemoryException("створення Person");
     }
 }
-
-/*Person::Person(const Person& other){
-    //numberOfPeople++;
-
-
-    id = new int;
-    *id = *(other.id);
-
-    surname = new std::string;
-    *surname = *(other.surname);
-
-    name = new std::string;
-    *name = *(other.name);
-
-    birthYear = new unsigned;
-    *birthYear = *(other.birthYear);
-
-    sex = new Sex;
-    *sex = *(other.sex);
-
-    t = new double;
-    *t = *(other.t);
-
-    hemoglobin = new unsigned;
-    *hemoglobin = *(other.hemoglobin);
-}*/
-
+//Конструктор
 Person::Person(const Person& other)
 {
-    // Інкрементуємо лічильник, оскільки це нова сутність у векторі (хоча її логічний ID може бути тимчасовим)
-    // Якщо логіка вимагає унікального ID, її слід переглянути, але для фікса подвійного free,
-    // головне - створити нову пам'ять.
     Person::numberOfPeople++;
 
-    // Створюємо нову пам'ять для кожного члена і копіюємо ЗНАЧЕННЯ
     try {
         id = new int(*other.id);
         surname = new std::string(*other.surname);
@@ -154,12 +124,11 @@ Person::Person(const Person& other)
         t = new double(*other.t);
         hemoglobin = new unsigned int(*other.hemoglobin);
     } catch (std::bad_alloc&) {
-        // Якщо виділення пам'яті не вдалося, відкочуємо зміни
         Person::numberOfPeople--;
         throw MemoryException("конструктор копіювання Person");
     }
 }
-
+//Деструктор
 Person::~Person(){
     delete id;
     delete surname;
@@ -170,10 +139,11 @@ Person::~Person(){
     delete hemoglobin;
     numberOfPeople--;
 }
+//Оператор присвоювання
 Person& Person::operator=(const Person& other)
 {
     if (this != &other) {
-        // 1. Звільнення старої пам'яті
+        // Звільнення старої пам'яті
         delete id;
         delete surname;
         delete name;
@@ -182,7 +152,7 @@ Person& Person::operator=(const Person& other)
         delete t;
         delete hemoglobin;
 
-        // 2. Виділення нової пам'яті і глибоке копіювання (з обробкою винятків)
+        // Виділення нової пам'яті і глибоке копіювання (з обробкою винятків)
         try {
             id = new int(*other.id);
             surname = new std::string(*other.surname);
@@ -192,115 +162,13 @@ Person& Person::operator=(const Person& other)
             t = new double(*other.t);
             hemoglobin = new unsigned int(*other.hemoglobin);
         } catch (std::bad_alloc&) {
-            // У разі помилки, необхідно залишити об'єкт у валідному, хоч і порожньому, стані.
-            // Найкращим рішенням є "copy-and-swap idiom", але для швидкої фікса
-            // просто прокидаємо виняток.
             throw MemoryException("оператор присвоєння Person");
         }
     }
     return *this;
 }
 
-Person& Person::operator=(Person&& other) noexcept
-{
-    if (this != &other) {
-        delete id;
-        delete surname;
-        delete name;
-        delete birthYear;
-        delete sex;
-        delete t;
-        delete hemoglobin;
 
-        id = other.id;
-        surname = other.surname;
-        name = other.name;
-        birthYear = other.birthYear;
-        sex = other.sex;
-        t = other.t;
-        hemoglobin = other.hemoglobin;
-
-        other.id = nullptr;
-        other.surname = nullptr;
-        other.name = nullptr;
-        other.birthYear = nullptr;
-        other.sex = nullptr;
-        other.t = nullptr;
-        other.hemoglobin = nullptr;
-    }
-    return *this;
-}
-
-Person::Person(Person&& other) noexcept
-{
-    id = other.id;
-    surname = other.surname;
-    name = other.name;
-    birthYear = other.birthYear;
-    sex = other.sex;
-    t = other.t;
-    hemoglobin = other.hemoglobin;
-
-    other.id = nullptr;
-    other.surname = nullptr;
-    other.name = nullptr;
-    other.birthYear = nullptr;
-    other.sex = nullptr;
-    other.t = nullptr;
-    other.hemoglobin = nullptr;
-}
-/*
-Person& Person::operator=(const Person& other){
-    if (this == &other) {
-        return *this;  // Захист від самоприсвоєння
-    }
-    try {
-        // Створюємо нові об'єкти
-        int* new_id = new int;
-        *new_id = *(other.id);
-
-        std::string* new_surname = new std::string;
-        *new_surname = *(other.surname);
-
-        std::string* new_name = new std::string;
-        *new_name = *(other.name);
-
-        unsigned* new_birthYear = new unsigned;
-        *new_birthYear = *(other.birthYear);
-
-        Sex* new_sex = new Sex;
-        *new_sex = *(other.sex);
-
-        double* new_t = new double;
-        *new_t = *(other.t);
-
-        unsigned* new_hemoglobin = new unsigned;
-        *new_hemoglobin = *(other.hemoglobin);
-
-        // Видаляємо старі
-        delete id;
-        delete surname;
-        delete name;
-        delete birthYear;
-        delete sex;
-        delete t;
-        delete hemoglobin;
-
-        // Присвоюємо нові
-        id = new_id;
-        surname = new_surname;
-        name = new_name;
-        birthYear = new_birthYear;
-        sex = new_sex;
-        t = new_t;
-        hemoglobin = new_hemoglobin;
-
-    } catch (std::bad_alloc&) {
-        throw MemoryException("присвоєння Person");
-    }
-    return *this;
-}
-*/
 int Person::getId() const{
 
     return *(this->id);
@@ -412,10 +280,6 @@ void Person::setHemoglobin(unsigned _hemoglobin){
 }
 
 std::istream& operator>>(std::istream& in, Person& obj){
-    /*if (!in.good()) {
-        throw StreamException("читання Person (потік у поганому стані)");
-    }*/
-
     int fileId;
     std::string surnameStr, nameStr, sexStr;
     unsigned birthYearVal, hemoglobinVal;
@@ -449,10 +313,9 @@ std::istream& operator>>(std::istream& in, Person& obj){
         throw InvalidDataException("некоректний гемоглобін: " + std::to_string(hemoglobinVal));
     }
 
-    Person::numberOfPeople++;
     try {
         if (!obj.id) obj.id = new int;
-        *(obj.id) = Person::numberOfPeople;
+        *(obj.id) = fileId;
 
         if (!obj.surname) obj.surname = new std::string;
         *(obj.surname) = surnameStr;
@@ -479,13 +342,11 @@ std::istream& operator>>(std::istream& in, Person& obj){
         *obj.hemoglobin = hemoglobinVal;
 
     } catch (std::bad_alloc&) {
-        Person::numberOfPeople--;
         throw MemoryException("читання Person з потоку");
     }
 
     return in;
 }
-
 std::ostream& operator<<(std::ostream& out, const Person& obj){
     out << *(obj.id) << " " << *(obj.surname) << " " << *(obj.name) << " " << *(obj.birthYear) << " " << *(obj.sex) << " " << *(obj.t) << " " << *(obj.hemoglobin);
 
@@ -496,12 +357,12 @@ std::ostream& operator<<(std::ostream& out, const Person& obj){
 unsigned Person::numberOfPeople = 0;
 
 
-unsigned Person::minHemoglobinForMan = 110;
-unsigned Person::maxHemoglobinForMan = 160;
-unsigned Person::minHemoglobinForWoman = 120;
-unsigned Person::maxHemoglobinForWoman = 140;
+const unsigned Person::minHemoglobinForMan = 110;
+const unsigned Person::maxHemoglobinForMan = 160;
+const unsigned Person::minHemoglobinForWoman = 120;
+const unsigned Person::maxHemoglobinForWoman = 140;
 
-double Person::minTForMan = 36.1;
-double Person::maxTForMan = 37.2;
-double Person::minTForWoman = 36.3;
-double Person::maxTForWoman = 37.4;
+const double Person::minTForMan = 36.1;
+const double Person::maxTForMan = 37.2;
+const double Person::minTForWoman = 36.3;
+const double Person::maxTForWoman = 37.4;
